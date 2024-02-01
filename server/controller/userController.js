@@ -9,7 +9,7 @@ const JWT = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const catchAsyncError = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
-
+const { isAuthenticated } = require("../middleware/auth");
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -99,6 +99,20 @@ router.post(
         return next(new ErrorHandler("Password error", 400));
 
       sendToken(user, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(err.message, 500));
+    }
+  })
+);
+
+router.get(
+  "/get-user",
+  isAuthenticated,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.id);
+      if (!user) return next(new ErrorHandler("User not found", 404));
+      res.status(200).json({ success: true, user });
     } catch (error) {
       return next(new ErrorHandler(err.message, 500));
     }
