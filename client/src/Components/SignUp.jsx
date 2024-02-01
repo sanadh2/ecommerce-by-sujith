@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import { server } from "../server";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -25,11 +26,21 @@ const SignUp = () => {
     newForm.append("name", name);
     newForm.append("email", email);
     newForm.append("password", password);
-    console.log(newForm);
     axios
       .post(`${server}/user/create-user`, newForm, config)
-      .then((result) => result.data)
-      .catch((err) => console.log(err));
+      .then((result) => {
+        toast.success(result.data.message);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setAvatar("");
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response) {
+          toast.error(err.response.data.message);
+        }
+      });
   };
 
   const handleFileInputChange = (e) => {
@@ -150,9 +161,8 @@ const SignUp = () => {
 
                 <label
                   htmlFor="file-input"
-                  className="ml-5 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 "
+                  className="ml-5 flex items-center justify-center px-4 py-2 w-full border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 "
                 >
-                  {" "}
                   <span>Upload File</span>
                   <input
                     type="file"
