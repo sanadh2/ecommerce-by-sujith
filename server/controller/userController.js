@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { upload } = require("../multer");
 const User = require("../model/UserModel");
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const path = require("path");
 const fs = require("fs");
 const JWT = require("jsonwebtoken");
@@ -10,6 +10,7 @@ const sendMail = require("../utils/sendMail");
 const catchAsyncError = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated } = require("../middleware/auth");
+
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -39,7 +40,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
     const activationToken = createActivationToken(user);
     const activationUrl = `http://localhost:5173/activation/${activationToken}`;
-
+    console.log(user);
     try {
       await sendMail({
         email: user.email,
@@ -75,6 +76,7 @@ router.post(
         process.env.ACTIVATION_SECRET
       );
       if (!newUserData) return next(new ErrorHandler("Invalid Token", 400));
+      console.log(newUserData);
       const newUser = await User.create(newUserData);
       sendToken(newUser, 201, res);
     } catch (error) {
@@ -98,7 +100,7 @@ router.post(
       if (!isValidPassword)
         return next(new ErrorHandler("Password error", 400));
 
-      sendToken(user, 201, res);
+      sendToken(user, 200, res);
     } catch (error) {
       return next(new ErrorHandler(err.message, 500));
     }
@@ -110,6 +112,7 @@ router.get(
   isAuthenticated,
   catchAsyncError(async (req, res, next) => {
     try {
+      console.log("user", req.user);
       const user = await User.findById(req.user.id);
       if (!user) return next(new ErrorHandler("User not found", 404));
       res.status(200).json({ success: true, user });

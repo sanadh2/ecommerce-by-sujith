@@ -6,6 +6,7 @@ import axios from "axios";
 import { server } from "../server";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +23,7 @@ const Login = () => {
         console.log(result);
         setEmail("");
         setPassword("");
-        navigate("/");
+        navigate("/home");
       })
       .catch((err) => {
         console.log(err);
@@ -100,7 +101,7 @@ const Login = () => {
                 <input
                   id="remember-me"
                   name="remeber-me"
-                  className="h-4 w-4 text-blue-600  border-gray-300 rounded"
+                  className="h-4 w-4 accent-black  rounded"
                   type="checkbox"
                 />
                 <label

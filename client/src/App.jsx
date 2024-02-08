@@ -1,12 +1,14 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage, SignUpPage, ActivationPage } from "./Routes";
+import { LoginPage, SignUpPage, ActivationPage, HomePage } from "./Routes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route
